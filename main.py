@@ -109,6 +109,12 @@ def sudoku_solver(list, current_element):
     current_row = current_element[0]
     current_column = current_element[1]
 
+    if current_element == [0,0]:
+        if list[current_row][current_column] != 0:
+            current_element = calculate_next_el(list, current_element)
+            current_row = current_element[0]
+            current_column = current_element[1]
+
     for i in range(9):
         list[current_row][current_column] += 1
         if check_number(list, current_element):
@@ -136,7 +142,17 @@ sudoku = [[0, 0, 0, 0, 0, 4, 0, 2, 8],
           [9, 0, 0, 0, 0, 0, 5, 0, 7],
           [6, 7, 0, 4, 0, 0, 0, 0, 0]]
 
-sudoku_solver(sudoku, current_element)
+sudok2 = [[5, 0, 2, 0, 8, 0, 0, 0, 0],
+          [0, 7, 0, 5, 0, 1, 0, 9, 0],
+          [0, 0, 0, 2, 0, 0, 0, 0, 0],
+          [4, 0, 0, 6, 0, 0, 0, 0, 7],
+          [0, 1, 8, 0, 7, 0, 9, 6, 0],
+          [7, 0, 0, 0, 0, 2, 0, 0, 4],
+          [0, 0, 0, 0, 0, 3, 0, 0, 0],
+          [0, 2, 0, 9, 0, 5, 0, 3, 0],
+          [0, 0, 0, 0, 6, 0, 4, 0, 2]]
+
+sudoku_solver(sudok2, current_element)
 
 
 
