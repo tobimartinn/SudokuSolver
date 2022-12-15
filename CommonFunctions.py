@@ -1,40 +1,54 @@
-diction = {0: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]],
-        1: [[0, 3], [0, 4], [0, 5], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5]],
-        2: [[0, 6], [0, 7], [0, 8], [1, 6], [1, 7], [1, 8], [2, 6], [2, 7], [2, 8]],
-        3: [[3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2], [5, 0], [5, 1], [5, 2]],
-        4: [[3, 3], [3, 4], [3, 5], [4, 3], [4, 4], [4, 5], [5, 3], [5, 4], [5, 5]],
-        5: [[3, 6], [3, 7], [3, 8], [4, 6], [4, 7], [4, 8], [5, 6], [5, 7], [5, 8]],
-        6: [[6, 0], [6, 1], [6, 2], [7, 0], [7, 1], [7, 2], [8, 0], [8, 1], [8, 2]],
-        7: [[6, 3], [6, 4], [6, 5], [7, 3], [7, 4], [7, 5], [8, 3], [8, 4], [8, 5]],
-        8: [[6, 6], [6, 7], [6, 8], [7, 6], [7, 7], [7, 8], [8, 6], [8, 7], [8, 8]]}
+import numpy as np
+
+quadrant_reference = np.repeat(np.repeat(np.arange(9).reshape(3,3), 3, axis=0), 3).reshape(9, 9)
 
 
-def check_quadrant(sudoku, element):
+def _check_quadrant(sudoku, element):
     """
     It checks if the number that points the parameter 'element' is valid only in the 3x3 corresponding quadrant.
     :param sudoku:
     :param element:
     :return: True: if it's valid / False: if it's not
     """
-    actual_row = element[0]
-    actual_column = element[1]
-    actual_key = 0
+    row = element[0]
+    column = element[1]
+    value = sudoku[row, column]
+    quadrant_number = quadrant_reference[row, column]
 
-    for key, value in diction.items():
-        for i in value:
-            if element == i:
-                actual_key = key
-                break
+    quadrant_list = sudoku[quadrant_reference == quadrant_number]
+    values_in_list = quadrant_list == value
 
-    for value in diction[actual_key]:
-        row = value[0]
-        column = value[1]
-        if (sudoku[row][column] == sudoku[actual_row][actual_column]) and (element != value):
-            return True
-        else:
-            continue
+    return not len(quadrant_list[values_in_list]) > 1
 
-    return False
+
+def _check_row(sudoku, element):
+    """
+    It checks if the number that points the parameter 'element' is valid only in the corresponding row.
+    :param sudoku:
+    :param element:
+    :return: True: if it's valid / False: if it's not
+    """
+    row = element[0]
+    column = element[1]
+    value = sudoku[row, column]
+    row_list = sudoku[row]
+
+    return not len(row_list[row_list == value]) > 1
+
+
+def _check_column(sudoku, element):
+    """
+    It checks if the number that points the parameter 'element' is valid only in the corresponding column.
+    :param sudoku:
+    :param element:
+    :return: True: if it's valid / False: if it's not
+    """
+    row = element[0]
+    column = element[1]
+    value = sudoku[row, column]
+    column_list = sudoku[:, column]
+
+    return not len(column_list[column_list == value]) > 1
 
 
 def check_number(sudoku, element):
@@ -44,21 +58,17 @@ def check_number(sudoku, element):
     :param element:
     :return: True: if it`s valid / False: if it's not
     """
-    current_row = element[0]
-    current_column = element[1]
-    # check row:
-    for i in range(9):
-        if (sudoku[current_row][i] == sudoku[current_row][current_column]) and (current_column != i):
-            return False
-    # check column:
-    for i in range(9):
-        if (sudoku[i][current_column] == sudoku[current_row][current_column]) and (current_row != i):
-            return False
-    # check quadrant:
-    if check_quadrant(sudoku, element):
+    return _check_row(sudoku, element) and _check_column(sudoku, element) and _check_quadrant(sudoku, element)
+    """
+    if not _check_row(sudoku, element):
+        return False
+    if not _check_column(sudoku, element):
+        return False
+    if not _check_quadrant(sudoku, element):
         return False
 
     return True
+    """
 
 
 def sum_one(element):
@@ -80,8 +90,6 @@ def sum_one(element):
 
     next_element = [current_row, current_column]
     return next_element
-
-
 
 
 def calculate_next_el(sudoku, current_element):
