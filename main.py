@@ -1,7 +1,6 @@
 from CommonFunctions import check_number, calculate_next_el
 import numpy as np
 
-
 def print_sudoku(sudoku):
     print("- - - - - - - - - - - - - - - - - - - - - - - - - - - -")
     for i in sudoku:
@@ -10,9 +9,6 @@ def print_sudoku(sudoku):
 
 
 current_element = [0, 0]
-
-
-
 
 
 def sudoku_solver(sudoku, current_element):
@@ -74,7 +70,7 @@ sudoku2 = np.array([[5, 0, 2, 0, 8, 0, 0, 0, 0],
 
 
 
-sudoku_solver(sudok2, current_element)
+sudoku_solver(sudoku2, current_element)
 
 
 
