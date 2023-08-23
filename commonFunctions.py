@@ -158,5 +158,3 @@ def sudoku_solver(sudoku, solution, current_element=None):
     else:
         sudoku[current_row][current_column] = 0
         return False
-
-

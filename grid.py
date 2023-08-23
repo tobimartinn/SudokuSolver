@@ -18,10 +18,13 @@ class Grid:
         return np.array([[y.get() for y in x] for x in self.list], dtype='uint8')
 
     def create_grid(self, where):
+        where.columnconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight=1, uniform='a')
+        where.rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8), weight=1, uniform='a')
+
         for i in range(self.rows):
             for j in range(self.columns):
-                entry = ttk.Entry(where, textvariable=self.list[i][j])
-                entry.grid(row=i, column=j, padx=1, pady=1)
+                entry = ttk.Entry(where, textvariable=self.list[i][j], width=3, justify='center')
+                entry.grid(row=i, column=j, ipadx=10, ipady=10)
 
     def print_grid(self):
         print_sudoku(self.np_list)
