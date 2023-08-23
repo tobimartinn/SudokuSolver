@@ -1,6 +1,6 @@
 import numpy as np
 
-quadrant_reference = np.repeat(np.repeat(np.arange(9).reshape(3,3), 3, axis=0), 3).reshape(9, 9)
+quadrant_reference = np.repeat(np.repeat(np.arange(9).reshape(3, 3), 3, axis=0), 3).reshape(9, 9)
 
 
 def _check_quadrant(sudoku, element):
@@ -59,21 +59,11 @@ def check_number(sudoku, element):
     :return: True: if it`s valid / False: if it's not
     """
     return _check_row(sudoku, element) and _check_column(sudoku, element) and _check_quadrant(sudoku, element)
-    """
-    if not _check_row(sudoku, element):
-        return False
-    if not _check_column(sudoku, element):
-        return False
-    if not _check_quadrant(sudoku, element):
-        return False
-
-    return True
-    """
 
 
 def sum_one(element):
     """
-    It calculates the immediately subsequent element in the sudoku list WITHOUT taking into account if it`s a zero or not.
+    It calculates the immediately subsequent element in the sudoku list WITHOUT taking into account if it's a zero or not.
     :param element:
     :return: the index of the immediately subsequent element
     """
@@ -94,7 +84,7 @@ def sum_one(element):
 
 def calculate_next_el(sudoku, current_element):
     """
-    It calculates the next element in the sudoku list but taking into account if it`s a zero or not.
+    It calculates the next element in the sudoku list but taking into account if it's a zero or not.
     :param sudoku:
     :param current_element:
     :return: The index of the next (valid) element
@@ -109,5 +99,64 @@ def calculate_next_el(sudoku, current_element):
         return calculate_next_el(sudoku, next_element)
 
 
+def print_sudoku(sudoku):
+    """
+    Prints the sudoku in a prettier way.
+    :param sudoku:
+    :return: None
+    """
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    for i in sudoku:
+        print("|{:^5}|{:^5}|{:^5}|{:^5}|{:^5}|{:^5}|{:^5}|{:^5}|{:^5}|".format(i[0], i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8]))
+        print("- - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+
+
+def store_solution(sudoku, solution):
+    """
+    Stores the solution from the sudoku np array (immutable) to the mutable solution list.
+    :param sudoku:
+    :param solution:
+    :return: None
+    """
+    for i in range(9):
+        for j in range(9):
+            solution[i][j] = sudoku[i, j]
+
+
+def sudoku_solver(sudoku, solution, current_element=None):
+    """
+    Solves the 'sudoku', starting from the 'current_element' ([0,0] by default), and stores the solution in 'solution'.
+    :param sudoku:
+    :param current_element:
+    :param solution:
+    :return: True if the sudoku can be solved, False if not
+    """
+    if not current_element:
+        current_element = [0, 0]
+
+    current_row = current_element[0]
+    current_column = current_element[1]
+
+    if current_element == [0, 0]:
+        if sudoku[current_row][current_column] != 0:
+            current_element = calculate_next_el(sudoku, current_element)
+            current_row = current_element[0]
+            current_column = current_element[1]
+
+    for i in range(9):
+        sudoku[current_row][current_column] += 1
+        if check_number(sudoku, current_element):
+            next_element = calculate_next_el(sudoku, current_element)
+            if next_element == [9, 0]:
+                store_solution(sudoku, solution)
+                return True
+            else:
+                if sudoku_solver(sudoku, solution, next_element):
+                    return True
+        else:
+            pass
+    else:
+        sudoku[current_row][current_column] = 0
+        return False
 
 
